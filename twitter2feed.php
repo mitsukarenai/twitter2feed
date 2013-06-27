@@ -1,13 +1,16 @@
 <?php
 /*
- * Récupération du flux RSS d'un compte Twitter
- * Passez le nom du compte en Paramètre. Exemple: http://monsite.com/twit2rss.php?name=Craftbukkit
- * 2013 - by Tronics
+ * Generate an ATOM feed from a Twitter account
+ * Input the screenname as param. Example: http://foo.bar/twitter2feed.php?name=support
+ * 2013 - original code by Tronics
+ * maintained by Mitsu - https://github.com/mitsukarenai/twitter2feed
  */
 
   if (!isset($_GET["name"]))
-    die ();
+    { header("HTTP/1.1 403 Forbidden"); die ('no username provided'); }
 
+  $exclude_response = TRUE;
+  $date = date("Y");
   $name = $_GET["name"];
   $str = file_get_contents("https://twitter.com/$name");
 
@@ -62,11 +65,11 @@
 ?>
 <feed xml:lang="en-US" xmlns="http://www.w3.org/2005/Atom">
   <title>Twitter / <?php echo $name ?></title>
-  <id>tag:twitter.com,2013:Status:<?php echo $name ?></id>
+  <id>tag:twitter.com,<?php echo $date; ?>:Status:<?php echo $name ?></id>
   <link type="text/html" rel="alternate" href="http://twitter.com/<?php echo $name ?>"/>
   <link type="application/atom+xml" rel="self" href="http://<?php echo $_SERVER["SERVER_NAME"].$_SERVER["REQUEST_URI"] ?>"></link>
   <updated><?php echo $updated ?></updated>
-  <subtitle>Twitter de <?php echo $fullname ?>.</subtitle>
+  <subtitle><?php echo $fullname ?>'s timeline</subtitle>
 <?php
   if ($nb !== false)
   {
@@ -90,11 +93,13 @@
       $message = "$header$rt$message$footer";
       $message = htmlspecialchars($message);
 
-      echo <<<HTML
+	if($exclude_response == TRUE and substr($title, 0, 1) == '@') { }
+
+      else echo <<<HTML
   <entry>
     <title>$title</title>
     <content type="html">$message</content>
-    <id>tag:twitter.com,2013:https://twitter.com/$name/status/$id</id>
+    <id>tag:twitter.com,$date:https://twitter.com/$name/status/$id</id>
     <published>$created</published>
     <updated>$created</updated>
     <link type="text/html" rel="alternate" href="https://twitter.com/$name/status/$id"/>
