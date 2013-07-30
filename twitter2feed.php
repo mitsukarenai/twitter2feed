@@ -27,7 +27,7 @@ if(!isset($_GET['name'])) {header("HTTP/1.1 404 Not Found"); die('no username pr
     'data-tweet-id="(?P<id>\d+)"(.*)'.
     '(data-retweet-id="(?P<retweetid>\d+)"(.*))?'.
     'data-screen-name="(?P<name>[^"]+)"(.*)'.
-    '<img class="avatar js-action-profile-avatar" src="(?P<avatar>[^"]+)" alt="(?P<fullname>[^"]+)">(.*)'.
+    '<img class="avatar js-action-profile-avatar" src="(?P<avatar>[^"]+)" alt="(?P<fullname>[^"]*)">(.*)'.
     'data-time="(?P<created>\d+)"(.*)'.
     '<p class="js-tweet-text tweet-text">(?P<message>.*)</p>'.
     '%sU', $str, $arr);
